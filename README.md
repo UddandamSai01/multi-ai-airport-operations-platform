@@ -26,7 +26,7 @@ The frontend provides a user-friendly dashboard for monitoring flight informatio
 ![Flight Research with API Data](Frontend/src/screenshots/Flight-Research-with-data.png)
 
 ### 5. Decision Support with Data
-![Decision Support with API Data](Frontend/src/screenshots/Decision-Support-with-data.png)
+![Decision Support with API Data](Frontend/src/screenshots/Decsion-Support-with-data.png)
 
 
 ## 🎯 Objective
