@@ -8,7 +8,26 @@
 
 ## 📌 Project Overview
 
-The SkyOps frontend provides a user-friendly dashboard for monitoring flight information and presenting analysis results in an organized format. Its interface includes flight selection, agent activity monitoring, decision support, and human review sections.
+The frontend provides a user-friendly dashboard for monitoring flight information and presenting analysis results in an organized format. Its interface includes flight selection, agent activity monitoring, decision support, and human review sections.
+
+
+## 📸 Frontend Screenshots
+
+### 1. Flight Research Without API Data
+![Flight Research Without API Data](Frontend/src/screenshots/Flight-Research-without-api-data.png)
+
+### 2. AI Agent Workflow Status
+![AI Agent Workflow Status](Frontend/src/screenshots/Ai-Agent-workflow-Status.png)
+
+### 3. Decision Support & Human Review (Without Data)
+![Decision Support Without Data](Frontend/src/screenshots/Decision-support-&-Human-review-without-data.png)
+
+### 4. Flight Research with Data
+![Flight Research with API Data](Frontend/src/screenshots/Flight-Research-with-data.png)
+
+### 5. Decision Support with Data
+![Decision Support with API Data](Frontend/src/screenshots/Decision-Support-with-data.png)
+
 
 ## 🎯 Objective
 
