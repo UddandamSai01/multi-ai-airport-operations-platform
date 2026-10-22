@@ -14,7 +14,7 @@ The frontend provides a user-friendly dashboard for monitoring flight informatio
 ## 📸 Frontend Screenshots
 
 ### 1. Flight Research Without API Data
-![Flight Research Without API Data](Frontend/src/screenshots/Flight-Research-without-api-data.png)
+![Flight Research Without API Data](Frontend/src/screenshots/Flight-Research-without-data.png)
 
 ### 2. AI Agent Workflow Status
 ![AI Agent Workflow Status](Frontend/src/screenshots/Ai-Agent-workflow-Status.png)
