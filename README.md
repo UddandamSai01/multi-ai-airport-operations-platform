@@ -62,6 +62,12 @@ To develop a responsive and interactive dashboard that presents flight analysis 
 frontend/
 ├── public/
 ├── src/
+│   ├── screenshots/
+│   |    ├── Ai-Agent-workflow-Status.png
+│   |    ├── Decision-support-&-Human-review-without-data.png
+│   |    ├── Decision-Support-with-data.png
+│   |    ├── Flight-Research-with-data.png
+│   |    └── Flight-Research-without-api-data.png
 │   ├── services/
 │   │   └── researchApi.js
 │   ├── App.jsx
