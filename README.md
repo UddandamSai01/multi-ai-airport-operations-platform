@@ -14,7 +14,7 @@ The frontend provides a user-friendly dashboard for monitoring flight informatio
 ## 📸 Frontend Screenshots
 
 ### 1. Flight Research Without API Data
-![Flight Research Without API Data](Frontend/src/screenshots/Flight-Research-without-api-data.png)
+![Flight Research Without API Data](Frontend/src/screenshots/Flight-Research-without-data.png)
 
 ### 2. AI Agent Workflow Status
 ![AI Agent Workflow Status](Frontend/src/screenshots/Ai-Agent-workflow-Status.png)
@@ -26,7 +26,7 @@ The frontend provides a user-friendly dashboard for monitoring flight informatio
 ![Flight Research with API Data](Frontend/src/screenshots/Flight-Research-with-data.png)
 
 ### 5. Decision Support with Data
-![Decision Support with API Data](Frontend/src/screenshots/Decision-Support-with-data.png)
+![Decision Support with API Data](Frontend/src/screenshots/Decsion-Support-with-data.png)
 
 
 ## 🎯 Objective
@@ -62,6 +62,12 @@ To develop a responsive and interactive dashboard that presents flight analysis 
 frontend/
 ├── public/
 ├── src/
+│   ├── screenshots/
+│   |    ├── Ai-Agent-workflow-Status.png
+│   |    ├── Decision-support-&-Human-review-without-data.png
+│   |    ├── Decision-Support-with-data.png
+│   |    ├── Flight-Research-with-data.png
+│   |    └── Flight-Research-without-api-data.png
 │   ├── services/
 │   │   └── researchApi.js
 │   ├── App.jsx
