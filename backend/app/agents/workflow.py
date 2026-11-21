@@ -31,6 +31,8 @@ from app.research_agent.schemas import (
 )
 from uuid import uuid4
 
+from app.logger import logger
+
 
 # =========================================================
 # WORKFLOW STATE
@@ -44,6 +46,7 @@ class AirportWorkflowState(TypedDict):
 
     planning_result: NotRequired[dict]
     research_result: NotRequired[dict]
+    analysis_result: NotRequired[dict]
 
     gate_request: NotRequired[dict]
     gate_result: NotRequired[dict]
@@ -68,6 +71,12 @@ def planning_node(state: AirportWorkflowState) -> dict:
     operational_information = {
         "rule_results": state.get("rule_results", []),
         "research_result": state.get("research_result"),
+        "analysis_result": state.get("analysis_result"),
+        "analysis_note": (
+            "analysis_result holds delay estimates from a statistical model. "
+            "They are estimates, not facts. Use only the numbers given and do not "
+            "invent any other figures."
+        ),
         "advisory_only": True,
     }
 
@@ -595,6 +604,37 @@ def research_agent_node(state: AirportWorkflowState) -> dict:
 
 
 # =========================================================
+# ANALYSIS AGENT (delay prediction model)
+# =========================================================
+
+def analysis_agent_node(state: AirportWorkflowState) -> dict:
+    """Estimate delay risk for the affected flights. Never raises (PRD 6.6)."""
+    try:
+        # Imported here so a missing model package can never break the whole workflow.
+        from app.agents.analysis_agent import run_analysis
+
+        result = run_analysis(state.get("affected_flights", []))
+    except Exception as exc:
+        logger.exception("Analysis agent failed")
+        result = {
+            "flights_analysed": 0,
+            "assessments": [],
+            "counts": {"High": 0, "Medium": 0, "Low": 0, "failed": 0},
+            "average_delay_probability": None,
+            "highest_risk": [],
+            "notes": [f"The delay analysis could not run: {exc}"],
+            "summary": "The delay analysis could not run. These are estimates only.",
+            "summary_source": "template",
+            "estimate": True,
+            "disclaimer": (
+                "Estimate for decision support only. Based on historical patterns and "
+                "forecast weather; a person makes the final decision."
+            ),
+        }
+    return {"analysis_result": result}
+
+
+# =========================================================
 # BUILD LANGGRAPH WORKFLOW
 # =========================================================
 
@@ -610,6 +650,11 @@ def build_airport_workflow():
     graph.add_node(
         "planning_agent",
         planning_node,
+    )
+
+    graph.add_node(
+        "analysis_agent",
+        analysis_agent_node,
     )
 
     graph.add_node(
@@ -639,6 +684,11 @@ def build_airport_workflow():
 
     graph.add_edge(
         "research_agent",
+        "analysis_agent",
+    )
+
+    graph.add_edge(
+        "analysis_agent",
         "planning_agent",
     )
 
