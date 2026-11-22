@@ -1,3 +1,5 @@
+import json
+
 from app.database.connection import get_db_connection
 from app.logger import logger
 
@@ -143,6 +145,7 @@ def initialize_workflow_table():
                 planning_result TEXT,
                 rule_results TEXT,
                 research_result TEXT,
+                analysis_result TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -162,6 +165,7 @@ def initialize_workflow_table():
             "planning_result": "TEXT",
             "rule_results": "TEXT",
             "research_result": "TEXT",
+            "analysis_result": "TEXT",
         }
 
         for column_name, column_type in required_columns.items():
@@ -190,6 +194,63 @@ def initialize_workflow_table():
         )
 
         raise
+
+    finally:
+        connection.close()
+
+
+def save_analysis_result(workflow_id: str, analysis_result: dict | None) -> bool:
+    """Store the Analysis agent result (as JSON text) on a workflow row.
+
+    Returns True if a row was updated. Never raises: a storage problem must not
+    break the workflow response.
+    """
+    connection = get_db_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            UPDATE workflows
+            SET analysis_result = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE workflow_id = ?
+            """,
+            (
+                json.dumps(analysis_result) if analysis_result is not None else None,
+                workflow_id,
+            ),
+        )
+
+        connection.commit()
+
+        return cursor.rowcount > 0
+
+    except Exception:
+        connection.rollback()
+        logger.exception("Failed to save analysis_result for %s", workflow_id)
+        return False
+
+    finally:
+        connection.close()
+
+
+def get_analysis_result(workflow_id: str) -> dict | None:
+    """Read the stored Analysis agent result, or None if there is none."""
+    connection = get_db_connection()
+
+    try:
+        row = connection.execute(
+            "SELECT analysis_result FROM workflows WHERE workflow_id = ?",
+            (workflow_id,),
+        ).fetchone()
+
+        if row is None or not row["analysis_result"]:
+            return None
+
+        return json.loads(row["analysis_result"])
+
+    except Exception:
+        logger.exception("Failed to read analysis_result for %s", workflow_id)
+        return None
 
     finally:
         connection.close()
