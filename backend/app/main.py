@@ -48,6 +48,7 @@ from app.api.flights import router as flights_router
 from app.api.runways import router as runway_router
 from app.api.research import router as research_router
 from app.api.action_approval import router as action_approval_router
+from app.api.analysis import router as analysis_router
 
 
 @asynccontextmanager
@@ -127,6 +128,7 @@ app.include_router(ai_router)
 app.include_router(runway_router)
 app.include_router(research_router)
 app.include_router(action_approval_router)
+app.include_router(analysis_router)
 
 # ============================================================
 # HOME ENDPOINT
