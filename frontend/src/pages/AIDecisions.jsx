@@ -253,6 +253,134 @@ function PlanningResults({ planningResult }) {
   );
 }
 
+function AnalysisResults({ analysis }) {
+  if (!analysis || typeof analysis !== "object") {
+    return (
+      <p className="text-sm text-slate-500">
+        No delay analysis is available for this workflow.
+      </p>
+    );
+  }
+
+  const counts = analysis.counts || {};
+  const assessments = Array.isArray(analysis.assessments)
+    ? analysis.assessments
+    : [];
+  const notes = Array.isArray(analysis.notes) ? analysis.notes : [];
+
+  const riskStyles = {
+    High: "border-red-500/40 bg-red-500/10 text-red-300",
+    Medium: "border-amber-500/40 bg-amber-500/10 text-amber-300",
+    Low: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {["High", "Medium", "Low", "failed"].map((key) => (
+          <div key={key} className="rounded-lg bg-slate-950 p-4 text-center">
+            <p className="text-2xl font-bold text-white">
+              {counts[key] ?? 0}
+            </p>
+            <p className="mt-1 text-xs uppercase text-slate-400">
+              {key === "failed" ? "Failed" : key}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="text-sm text-slate-300">
+        Highest predicted risk:{" "}
+        <span className="font-mono text-white">
+          {Array.isArray(analysis.highest_risk) &&
+          analysis.highest_risk.length > 0
+            ? analysis.highest_risk.join(", ")
+            : "none"}
+        </span>
+        {typeof analysis.average_delay_probability === "number" && (
+          <span className="text-slate-400">
+            {" "}
+            · average {Math.round(analysis.average_delay_probability * 100)}%
+            (estimate)
+          </span>
+        )}
+      </div>
+
+      <p className="text-sm leading-6 text-slate-300">{analysis.summary}</p>
+
+      <p className="text-xs text-slate-500">
+        Summary source:{" "}
+        {analysis.summary_source === "llm" ? "language model" : "template"}.
+        All numbers come from the delay model.
+      </p>
+
+      {assessments.length > 0 && (
+        <div className="space-y-2">
+          {assessments.map((item, index) => (
+            <div
+              key={`${item.flight_id}-${index}`}
+              className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-800 bg-slate-950 p-3 text-sm"
+            >
+              <span className="font-mono font-semibold text-white">
+                {item.flight_id}
+              </span>
+              <span className="text-xs text-slate-500">
+                {item.route || "route unknown"}
+              </span>
+
+              {item.status === "ok" ? (
+                <>
+                  <span
+                    className={`rounded-full border px-3 py-0.5 text-xs font-semibold ${
+                      riskStyles[item.risk_level] || riskStyles.Low
+                    }`}
+                  >
+                    {item.risk_level} risk
+                  </span>
+                  <span className="text-slate-300">
+                    {typeof item.delay_probability === "number"
+                      ? `${Math.round(item.delay_probability * 100)}%`
+                      : "n/a"}{" "}
+                    chance of delay (estimate)
+                  </span>
+                  <span className="text-slate-400">
+                    ~
+                    {typeof item.expected_delay_minutes === "number"
+                      ? Math.round(item.expected_delay_minutes)
+                      : "n/a"}{" "}
+                    min (estimate)
+                  </span>
+                </>
+              ) : (
+                <span className="text-amber-300">
+                  Could not be assessed: {item.error}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {notes.length > 0 && (
+        <ul className="list-disc space-y-1 pl-5 text-xs text-amber-300">
+          {notes.map((note, index) => (
+            <li key={index}>{note}</li>
+          ))}
+        </ul>
+      )}
+
+      <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-5 text-amber-200">
+        {analysis.disclaimer ||
+          "Estimates are for decision support only. A person makes the final decision."}{" "}
+        The model was trained on one year of US flights between 10 airports;
+        other airports and airlines are less reliable, forecast weather is
+        less accurate than historical weather, and overall accuracy is
+        moderate.
+      </p>
+    </div>
+  );
+}
+
 function WorkflowSummary({ workflow }) {
   const input = workflow.input_data || {};
   const airport =
