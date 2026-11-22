@@ -77,7 +77,8 @@ def start_workflow(
                 "list of non-empty strings."
             ),
         )
-        # Validate optional gate availability input.
+
+    # Validate optional gate availability input.
     gate_request = input_data.get("gate_request")
 
     if gate_request is not None:
@@ -114,6 +115,7 @@ def start_workflow(
             )
 
         gate_request = validated_gate_request.model_dump()
+
     workflow_id = str(uuid.uuid4())
     user_id = current_user["user_id"]
 
@@ -209,8 +211,9 @@ def start_workflow(
 
         research_result = result.get("research_result")
         planning_result = result.get("planning_result")
+        analysis_result = result.get("analysis_result")
         rule_results = result.get("rule_results", [])
-        
+
         # Extract consolidated RULE-009 decisions.
         decision_supports = [
             item.get("decision_support")
@@ -279,6 +282,7 @@ def start_workflow(
                 research_result = ?,
                 planning_result = ?,
                 rule_results = ?,
+                analysis_result = ?,
                 updated_at = CURRENT_TIMESTAMP
             WHERE workflow_id = ?
             AND requested_by = ?
@@ -289,6 +293,7 @@ def start_workflow(
                 json.dumps(research_result) if research_result is not None else None,
                 json.dumps(planning_result),
                 json.dumps(rule_results),
+                json.dumps(analysis_result) if analysis_result is not None else None,
                 workflow_id,
                 user_id,
             ),
@@ -305,6 +310,7 @@ def start_workflow(
             decision=final_decision,
             research_result=research_result,
             planning_result=planning_result,
+            analysis_result=analysis_result,
             rule_results=rule_results,
         )
 
@@ -359,6 +365,14 @@ def get_workflow(
             )
         else:
             workflow["planning_result"] = None
+
+        # Deserialize Analysis Agent result (delay estimates)
+        if workflow.get("analysis_result"):
+            workflow["analysis_result"] = json.loads(
+                workflow["analysis_result"]
+            )
+        else:
+            workflow["analysis_result"] = None
 
         if workflow.get("rule_results"):
             workflow["rule_results"] = json.loads(

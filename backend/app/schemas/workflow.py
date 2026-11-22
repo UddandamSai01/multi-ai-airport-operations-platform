@@ -32,6 +32,9 @@ class WorkflowResponse(BaseModel):
 
     planning_result: dict[str, Any] | None = None
 
+    # Delay estimates from the Analysis agent (estimates only)
+    analysis_result: dict[str, Any] | None = None
+
     rule_results: list[dict[str, Any]] = Field(
         default_factory=list
     )
