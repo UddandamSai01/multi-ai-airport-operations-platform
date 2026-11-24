@@ -444,13 +444,17 @@ def rule_engine_node(
         matches = flight_lookup.get(normalized_number, [])
 
         if len(matches) > 1:
-            raise ValueError(
-                f"Multiple database records found for flight {flight_number}."
+            flight_record = max(
+                matches,
+                key=lambda match: str(match.get("scheduled_departure") or ""),
             )
+        elif matches:
+            flight_record = matches[0]
+        else:
+            flight_record = None
 
         # Determine delay information from SQLite when available.
-        if matches:
-            flight_record = matches[0]
+        if flight_record:
             raw_delay = flight_record.get("delay_minutes")
 
             delay_minutes = (

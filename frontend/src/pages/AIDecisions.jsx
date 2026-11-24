@@ -900,6 +900,20 @@ export default function AIDecisions() {
             </div>
           </section>
 
+                    <section className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+            <div className="mb-5 flex items-center gap-2">
+              <BrainCircuit size={20} className="text-cyan-400" />
+              <h3 className="text-lg font-semibold">
+                Analysis Agent: Predicted Delay Risk
+              </h3>
+              <span className="ml-auto rounded border border-cyan-500/40 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-cyan-300">
+                Estimate
+              </span>
+            </div>
+
+            <AnalysisResults analysis={displayedWorkflow?.analysis_result} />
+          </section>
+
           <section className="rounded-xl border border-slate-800 bg-slate-900 p-5">
             <div className="mb-5 flex items-center gap-2">
               <FileText size={20} className="text-sky-400" />
